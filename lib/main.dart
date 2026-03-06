@@ -8,12 +8,16 @@ import 'pedido_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  
   final produtoService = ProdutoService();
   await produtoService.init();
+  
   final usuarioService = UsuarioService();
   await usuarioService.init();
+  
   final pedidoService = PedidoService(produtoService: produtoService);
   await pedidoService.init();
+  
   runApp(
     MyApp(
       produtoService: produtoService,
@@ -39,11 +43,28 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Sistema de Gestão',
+      title: 'Cokylicious',
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: Colors.purple,
-        brightness: Brightness.dark,
+       
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 141, 38, 29), 
+          primary: const Color(0xFFF9BC15),   
+          secondary: const Color.fromARGB(255, 175, 58, 44),
+          surface: const Color.fromARGB(255, 163, 39, 28),   
+          brightness: Brightness.dark,  
+        ),
+        
+        scaffoldBackgroundColor: const Color.fromARGB(255, 141, 28, 17),
+        
+       
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFF9BC15),
+            foregroundColor: Colors.black, 
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
       home: WelcomePage(
         produtoService: produtoService,
@@ -53,4 +74,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-                  
