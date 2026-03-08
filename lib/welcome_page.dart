@@ -28,15 +28,14 @@ class WelcomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons
-                    .local_pizza_sharp, //icon que aparece na tela de boas-vindas
-                size: 80,
-                color: Theme.of(context).colorScheme.primary,
+              Image.asset(
+                'assets/images/logo.png',//logotipo na pagina de boas-vindas
+                width: 150,
+                height: 150,
               ),
               const SizedBox(height: 20),
               Text(
-                'Bem-vindo a nossa Loja', //onde será colocado o nome do estabelecimento
+                'Cokylicius', 
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 26,
