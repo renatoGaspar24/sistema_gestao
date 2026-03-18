@@ -230,20 +230,71 @@ class _AdminPageState extends State<AdminPage> {
       itemCount: _pedidos.length,
       itemBuilder: (context, index) {
         final ped = _pedidos[index];
-        return ListTile(
-          title: Text(ped.clienteNome),
-          subtitle: Text(
-            '${ped.itens.length} itens - ${ped.entregue ? 'Entregue' : 'Pendente'}',
-          ),
-          trailing: ped.entregue
-              ? null
-              : IconButton(
-                  icon: const Icon(Icons.check),
-                  onPressed: () {
-                    widget.pedidoService.marcarEntregue(index);
-                    _loadPedidos();
-                  },
+        return Card(
+          elevation: 3,
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: ExpansionTile( // ExpansionTile permite ver os itens ao clicar
+            title: Text(
+              ped.clienteNome, 
+              style: const TextStyle(fontWeight: FontWeight.bold)
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.phone, size: 16, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Text(ped.telefone.isEmpty ? "Não informado" : ped.telefone),
+                  ],
                 ),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        ped.endereco.isEmpty ? "Retirada no local" : ped.endereco,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Status: ${ped.entregue ? '✅ Entregue' : '⏳ Pendente'}',
+                  style: TextStyle(
+                    color: ped.entregue ? Colors.green : Colors.orange,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            trailing: ped.entregue
+                ? const Icon(Icons.check_circle, color: Colors.green)
+                : IconButton(
+                    icon: const Icon(Icons.delivery_dining, color: Color(0xFF8B1A10)),
+                    onPressed: () {
+                      widget.pedidoService.marcarEntregue(index);
+                      _loadPedidos();
+                    },
+                  ),
+            children: [
+              const Divider(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text("Itens do Pedido:", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              // Lista os itens dentro do pedido
+              ...ped.itens.map((item) => ListTile(
+                title: Text(item.produto.nome),
+                trailing: Text("x${item.quantidade}"),
+              )),
+              const SizedBox(height: 10),
+            ],
+          ),
         );
       },
     );

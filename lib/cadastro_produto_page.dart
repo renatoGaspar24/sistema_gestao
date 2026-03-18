@@ -7,7 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'models/produto.dart';
-
+import 'dart:convert'; // Importante para o base64Encode
+ 
 class CadastroProdutoPage extends StatefulWidget {
   final Function(Produto) onSalvar;
   const CadastroProdutoPage({super.key, required this.onSalvar});
@@ -26,6 +27,7 @@ class _CadastroProdutoPageState extends State<CadastroProdutoPage> {
   Categoria _categoria = Categoria.hamburguer;
   
   // Variáveis para imagem
+  // ignore: unused_field
   File? _imagemSelecionada;   // Adicionado para armazenar a imagem selecionada (Mobile)
   Uint8List? _webImageBytes; // Adicionado para armazenar os bytes da imagem (Web)
   
@@ -44,6 +46,7 @@ class _CadastroProdutoPageState extends State<CadastroProdutoPage> {
     }
   }
 
+  // ignore: unused_element
   Future<String> _salvarImagemNoProjeto(File imagem) async {
     // Se estiver na Web, a imagem vai ser salva em um caminho temporário (pois não temos acesso ao sistema de arquivos local)
     if (kIsWeb) return 'caminho_web_temporario';
@@ -63,33 +66,37 @@ class _CadastroProdutoPageState extends State<CadastroProdutoPage> {
   }
 
   void _salvar() async {
-    if (_nome.text.isEmpty || _preco.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Preencha o nome e o preço!")),
-      );
-      return;
-    }
-
-    String imagemPath = '';
-    if (_imagemSelecionada != null) {
-      imagemPath = await _salvarImagemNoProjeto(_imagemSelecionada!);
-    }
-
-    final novo = Produto(
-      nome: _nome.text,
-      descricao: _descricao.text,
-      preco: double.tryParse(_preco.text) ?? 0,
-      moeda: _moeda.text.isEmpty ? "AOA" : _moeda.text,
-      imagemPath: imagemPath,
-      categoria: _categoria,
-      quantidade: int.tryParse(_quantidade.text) ?? 0,
+  if (_nome.text.isEmpty || _preco.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Preencha o nome e o preço!")),
     );
-
-    widget.onSalvar(novo);
-    if (mounted) {
-      Navigator.pop(context);
-    }
+    return;
   }
+
+  String imagemFinal = '';
+
+  // Se o usuário selecionou uma imagem (seja no Mobile ou Web)
+  if (_webImageBytes != null) {
+    // Convertemos os bytes da imagem para uma String Base64
+    imagemFinal = base64Encode(_webImageBytes!);
+  } else {
+    // Caminho padrão caso não selecione foto (deve estar no seu pubspec.yaml)
+    imagemFinal = 'assets/produtos/placeholder.png';
+  }
+
+  final novo = Produto(
+    nome: _nome.text,
+    descricao: _descricao.text,
+    preco: double.tryParse(_preco.text) ?? 0,
+    moeda: _moeda.text.isEmpty ? "AOA" : _moeda.text,
+    imagemPath: imagemFinal, // Agora este campo pode ser Base64 OU um caminho de Asset
+    categoria: _categoria,
+    quantidade: int.tryParse(_quantidade.text) ?? 0,
+  );
+
+  widget.onSalvar(novo);
+  Navigator.pop(context);
+}
 
   @override
   Widget build(BuildContext context) {
