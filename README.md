@@ -1,6 +1,6 @@
 # sistema_gestao
 
-A new Flutter project.
+Sistema de gestão para Hamburgaria Coky Licius
 
 ## Getting Started
 

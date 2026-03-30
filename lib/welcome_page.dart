@@ -45,16 +45,16 @@ class WelcomePage extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                'Visite o nosso cardápio',
+                'Visite o nosso cardápio.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
                 ),
               ),
+              
               const SizedBox(height: 40),
-              // Se o aplicativo for aberto na web, permitimos acesso ao cardápio
-              // mas também oferecemos um botão para login de administrador
+              // Se o aplicativo for aberto na web, poderá ter acesso ao cardápio
               if (kIsWeb) ...[
                 ElevatedButton(
                   onPressed: () {
@@ -102,6 +102,7 @@ class WelcomePage extends StatelessWidget {
                   },
                   child: const Text('Entrar'),
                 ),
+                
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () {
@@ -115,6 +116,7 @@ class WelcomePage extends StatelessWidget {
                         ),
                       ),
                     );
+                    
                   },
                   child: const Text('Criar conta'),
                 ),

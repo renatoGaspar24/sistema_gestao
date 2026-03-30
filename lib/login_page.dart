@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'produto_service.dart';
@@ -57,7 +58,14 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('CokyLicius',
+        textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 33,
+                fontWeight: FontWeight.bold,
+                color: CupertinoColors.systemYellow,
+              ),
+              ),
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
@@ -68,6 +76,18 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Image.asset(
+                'assets/images/logo.png',//logotipo na pagina de boas-vindas
+                width: 150,
+                height: 150,
+              ),
+              Text('Entrar',
+              style: TextStyle(
+                fontSize: 20,
+                color: CupertinoColors.systemYellow,
+              ),
+              ),
+              
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(

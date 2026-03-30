@@ -31,7 +31,7 @@ class _AdminPageState extends State<AdminPage> {
   List<Usuario> _usuarios = [];
   List<Pedido> _pedidos = [];
 
-  @override
+  @override 
   void initState() {
     super.initState();
     _loadProdutos();
@@ -118,6 +118,7 @@ class _AdminPageState extends State<AdminPage> {
                 _buildPedidosTab(),
               ],
             ),
+          // botoes fluantes de atualizacao de stock,funcionarios ,produtos 
             floatingActionButton: Builder(
               builder: (context) {
                 switch (tabController.index) {
@@ -135,6 +136,7 @@ class _AdminPageState extends State<AdminPage> {
                         );
                       },
                     );
+                    
                   case 2:
                     return FloatingActionButton(
                       child: const Icon(Icons.person_add),
