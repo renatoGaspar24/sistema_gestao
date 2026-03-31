@@ -41,4 +41,6 @@ class PedidoService {
       await _box.putAt(index, p);
     }
   }
+
+  Future<void> atualizarPedido(Pedido i) async {}
 }

@@ -1,6 +1,5 @@
-import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'models/produto.dart';
 import 'cadastro_produto_page.dart';
 import 'produto_service.dart';
@@ -31,7 +30,7 @@ class _AdminPageState extends State<AdminPage> {
   List<Usuario> _usuarios = [];
   List<Pedido> _pedidos = [];
 
-  @override 
+  @override
   void initState() {
     super.initState();
     _loadProdutos();
@@ -91,10 +90,16 @@ class _AdminPageState extends State<AdminPage> {
     _loadUsuarios();
   }
 
+  // ignore: unused_element
+  void _atualizarPedido(Pedido i) async {
+    await widget.pedidoService.atualizarPedido(i);
+    _loadPedidos();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Builder(
         builder: (context) {
           final tabController = DefaultTabController.of(context);
@@ -103,8 +108,7 @@ class _AdminPageState extends State<AdminPage> {
               title: const Text("Admin"),
               bottom: const TabBar(
                 tabs: [
-                  Tab(text: 'Produtos'),
-                  Tab(text: 'Estoque'),
+                  Tab(text: 'Produtos/Estoque'),
                   Tab(text: 'Funcionários'),
                   Tab(text: 'Pedidos'),
                 ],
@@ -113,18 +117,17 @@ class _AdminPageState extends State<AdminPage> {
             body: TabBarView(
               children: [
                 _buildProdutosTab(),
-                _buildEstoqueTab(),
                 _buildUsuariosTab(),
                 _buildPedidosTab(),
               ],
             ),
-          // botoes fluantes de atualizacao de stock,funcionarios ,produtos 
-            floatingActionButton: Builder(
-              builder: (context) {
+            // botoes fluantes de atualizacao de stock,funcionarios ,produtos
+            floatingActionButton: AnimatedBuilder(
+              animation: tabController,
+              builder: (context, child) {
                 switch (tabController.index) {
                   case 0:
                     return FloatingActionButton(
-                      child: const Icon(Icons.add),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -135,11 +138,11 @@ class _AdminPageState extends State<AdminPage> {
                           ),
                         );
                       },
+                      child: const Icon(Icons.add),
                     );
-                    
-                  case 2:
+
+                  case 1:
                     return FloatingActionButton(
-                      child: const Icon(Icons.person_add),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -150,7 +153,14 @@ class _AdminPageState extends State<AdminPage> {
                           ),
                         );
                       },
+                      child: const Icon(Icons.person_add),
                     );
+                  case 2:
+                    return FloatingActionButton(
+                      onPressed: _loadPedidos,
+                      child: const Icon(Icons.refresh),
+                    );
+
                   default:
                     return const SizedBox.shrink();
                 }
@@ -175,14 +185,7 @@ class _AdminPageState extends State<AdminPage> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListTile(
-            leading: p.imagemPath.isNotEmpty && !kIsWeb
-                ? Image.file(
-                    File(p.imagemPath),
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  )
-                : const Icon(Icons.fastfood),
+            leading: _buildProdutoImagem(p),
             title: Text(p.nome),
             subtitle: Text(
               "${p.descricao}\nPreço: ${p.preco} ${p.moeda} | Cat: ${p.categoria.name} | Qtde: ${p.quantidade}",
@@ -197,6 +200,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
+  /*
   Widget _buildEstoqueTab() {
     final baixos = widget.produtoService.produtosAbaixo(5);
     return ListView.builder(
@@ -214,6 +218,40 @@ class _AdminPageState extends State<AdminPage> {
       },
     );
   }
+*/
+  Widget _buildProdutoImagem(Produto p) {
+    if (p.imagemPath.isEmpty) {
+      return const Icon(Icons.fastfood, size: 50);
+    }
+
+    if (p.imagemPath.startsWith('assets/')) {
+      return Image.asset(
+        p.imagemPath,
+        width: 50,
+        height: 50,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.broken_image, size: 50),
+      );
+    }
+
+    if (p.imagemPath.length > 100) {
+      try {
+        return Image.memory(
+          base64Decode(p.imagemPath),
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) =>
+              const Icon(Icons.broken_image, size: 50),
+        );
+      } catch (_) {
+        return const Icon(Icons.broken_image, size: 50);
+      }
+    }
+
+    return const Icon(Icons.fastfood, size: 50);
+  }
 
   Widget _buildUsuariosTab() {
     return ListView.builder(
@@ -221,7 +259,14 @@ class _AdminPageState extends State<AdminPage> {
       itemCount: _usuarios.length,
       itemBuilder: (context, index) {
         final u = _usuarios[index];
-        return ListTile(title: Text(u.nome), subtitle: Text(u.cargo));
+        return ExpansionTile(
+          title: Text(u.nome),
+          subtitle: Text(u.cargo),
+          children: [
+            ListTile(title: const Text("Telefone"), subtitle: Text(u.telefone)),
+            ListTile(title: const Text("Cargo"), subtitle: Text(u.cargo)),
+          ],
+        );
       },
     );
   }
@@ -235,11 +280,14 @@ class _AdminPageState extends State<AdminPage> {
         return Card(
           elevation: 3,
           margin: const EdgeInsets.symmetric(vertical: 8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: ExpansionTile( // ExpansionTile permite ver os itens ao clicar
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ExpansionTile(
+            // ExpansionTile permite ver os itens ao clicar
             title: Text(
-              ped.clienteNome, 
-              style: const TextStyle(fontWeight: FontWeight.bold)
+              ped.clienteNome,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,7 +306,9 @@ class _AdminPageState extends State<AdminPage> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        ped.endereco.isEmpty ? "Retirada no local" : ped.endereco,
+                        ped.endereco.isEmpty
+                            ? "Retirada no local"
+                            : ped.endereco,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -277,7 +327,10 @@ class _AdminPageState extends State<AdminPage> {
             trailing: ped.entregue
                 ? const Icon(Icons.check_circle, color: Colors.green)
                 : IconButton(
-                    icon: const Icon(Icons.delivery_dining, color: Color(0xFF8B1A10)),
+                    icon: const Icon(
+                      Icons.delivery_dining,
+                      color: Color(0xFF8B1A10),
+                    ),
                     onPressed: () {
                       widget.pedidoService.marcarEntregue(index);
                       _loadPedidos();
@@ -287,13 +340,18 @@ class _AdminPageState extends State<AdminPage> {
               const Divider(),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text("Itens do Pedido:", style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text(
+                  "Itens do Pedido:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
               // Lista os itens dentro do pedido
-              ...ped.itens.map((item) => ListTile(
-                title: Text(item.produto.nome),
-                trailing: Text("x${item.quantidade}"),
-              )),
+              ...ped.itens.map(
+                (item) => ListTile(
+                  title: Text(item.produto.nome),
+                  trailing: Text("x${item.quantidade}"),
+                ),
+              ),
               const SizedBox(height: 10),
             ],
           ),
