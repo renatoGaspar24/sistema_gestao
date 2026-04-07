@@ -121,9 +121,9 @@ class _AdminPageState extends State<AdminPage> {
                 _buildPedidosTab(),
               ],
             ),
-            // botoes fluantes de atualizacao de stock,funcionarios ,produtos
-            floatingActionButton: AnimatedBuilder(
-              animation: tabController,
+            // botoes fluantes de atualizacao de stock,funcionarios e produtos
+            floatingActionButton: AnimatedBuilder(            // foi adicionado pq ao mudar de aba o botao nao atualizava e causa bugs na pagina
+              animation: tabController,                       // está funcao recontroi o botao para cada aba sempre que mudo 
               builder: (context, child) {
                 switch (tabController.index) {
                   case 0:
@@ -138,7 +138,7 @@ class _AdminPageState extends State<AdminPage> {
                           ),
                         );
                       },
-                      child: const Icon(Icons.add),
+                      child: const Icon(Icons.add),      //botao para adicionar produtos 
                     );
 
                   case 1:
@@ -153,12 +153,12 @@ class _AdminPageState extends State<AdminPage> {
                           ),
                         );
                       },
-                      child: const Icon(Icons.person_add),
+                      child: const Icon(Icons.person_add), // botao na aba de funcionarios
                     );
                   case 2:
                     return FloatingActionButton(
                       onPressed: _loadPedidos,
-                      child: const Icon(Icons.refresh),
+                      child: const Icon(Icons.refresh), //botao na na aba de pedido
                     );
 
                   default:
@@ -171,9 +171,10 @@ class _AdminPageState extends State<AdminPage> {
       ),
     );
   }
-
-  Widget _buildProdutosTab() {
-    return ListView.builder(
+ // contrucao da aba onde sao apresentados os produtos,mostrando os seus detalhes.´
+ // listView.builder para mostrar os em forma de lista. 
+  Widget _buildProdutosTab() {                
+    return ListView.builder( 
       padding: const EdgeInsets.all(16),
       itemCount: _produtos.length,
       itemBuilder: (context, index) {
@@ -199,26 +200,7 @@ class _AdminPageState extends State<AdminPage> {
       },
     );
   }
-
-  /*
-  Widget _buildEstoqueTab() {
-    final baixos = widget.produtoService.produtosAbaixo(5);
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _produtos.length,
-      itemBuilder: (context, index) {
-        final p = _produtos[index];
-        return ListTile(
-          title: Text(p.nome),
-          subtitle: Text('Quantidade: ${p.quantidade}'),
-          tileColor: baixos.contains(p)
-              ? Colors.red.withAlpha((0.2 * 255).toInt())
-              : null,
-        );
-      },
-    );
-  }
-*/
+ 
   Widget _buildProdutoImagem(Produto p) {
     if (p.imagemPath.isEmpty) {
       return const Icon(Icons.fastfood, size: 50);
@@ -234,7 +216,7 @@ class _AdminPageState extends State<AdminPage> {
             const Icon(Icons.broken_image, size: 50),
       );
     }
-
+// esta funcao serve para descodificar as imagens que sao adicionadas quando for cadastrado um produtos
     if (p.imagemPath.length > 100) {
       try {
         return Image.memory(

@@ -21,7 +21,7 @@ class ClientePage extends StatefulWidget {
 
 class _ClientePageState extends State<ClientePage> {
   final List<ItemPedido> carrinho = [];
-  
+
   // Controllers para capturar os dados do cliente
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
@@ -34,8 +34,10 @@ class _ClientePageState extends State<ClientePage> {
     return Scaffold(
       backgroundColor: const Color(0xFF8B1A10),
       appBar: AppBar(
-        title: const Text('Cokylicious Menu', 
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Cokylicious Menu',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color(0xFF8B1A10),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -43,26 +45,33 @@ class _ClientePageState extends State<ClientePage> {
       body: SafeArea(
         child: produtos.isEmpty
             ? const Center(
-                child: Text('Nenhum produto disponível', 
-                  style: TextStyle(color: Colors.white, fontSize: 18)))
+                child: Text(
+                  'Nenhum produto disponível',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              )
             : Column(
                 children: [
                   Expanded(
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         // Responsividade: muda o número de colunas conforme a largura
-                        int colunas = constraints.maxWidth > 900 ? 4 : (constraints.maxWidth > 600 ? 3 : 2);
-                        
+                        int colunas = constraints.maxWidth > 900
+                            ? 4
+                            : (constraints.maxWidth > 600 ? 3 : 2);
+
                         return GridView.builder(
                           padding: const EdgeInsets.all(12),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: colunas,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
-                            childAspectRatio: 0.75, // Ajustado para acomodar melhor os elementos
+                            childAspectRatio:
+                                0.75, // Ajustado para acomodar melhor os elementos
                           ),
                           itemCount: produtos.length,
-                          itemBuilder: (context, index) => _buildProdutoCard(produtos[index]),
+                          itemBuilder: (context, index) =>
+                              _buildProdutoCard(produtos[index]),
                         );
                       },
                     ),
@@ -87,7 +96,8 @@ class _ClientePageState extends State<ClientePage> {
         return Image.memory(
           base64Decode(imagemPath),
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
+          errorBuilder: (context, error, stackTrace) =>
+              const Icon(Icons.broken_image),
         );
       } catch (e) {
         return const Icon(Icons.broken_image);
@@ -98,7 +108,8 @@ class _ClientePageState extends State<ClientePage> {
     return Image.asset(
       imagemPath,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => const Icon(Icons.fastfood, size: 40),
+      errorBuilder: (context, error, stackTrace) =>
+          const Icon(Icons.fastfood, size: 40),
     );
   }
 
@@ -114,7 +125,9 @@ class _ClientePageState extends State<ClientePage> {
           Expanded(
             flex: 3,
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(15),
+              ),
               child: Container(
                 color: Colors.white24,
                 child: _buildImagem(produto.imagemPath),
@@ -131,7 +144,10 @@ class _ClientePageState extends State<ClientePage> {
                 children: [
                   Text(
                     produto.nome,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -139,7 +155,7 @@ class _ClientePageState extends State<ClientePage> {
                   Text(
                     '${produto.preco.toStringAsFixed(0)} ${produto.moeda}',
                     style: const TextStyle(
-                      color: Color(0xFF8B1A10), 
+                      color: Color(0xFF8B1A10),
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -147,7 +163,9 @@ class _ClientePageState extends State<ClientePage> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        carrinho.add(ItemPedido(produto: produto, quantidade: 1));
+                        carrinho.add(
+                          ItemPedido(produto: produto, quantidade: 1),
+                        );
                       });
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -156,7 +174,11 @@ class _ClientePageState extends State<ClientePage> {
                         ),
                       );
                     },
-                    child: const Icon(Icons.add_circle, color: Color(0xFF8B1A10), size: 30),
+                    child: const Icon(
+                      Icons.add_circle,
+                      color: Color(0xFF8B1A10),
+                      size: 30,
+                    ),
                   ),
                 ],
               ),
@@ -180,7 +202,9 @@ class _ClientePageState extends State<ClientePage> {
           backgroundColor: const Color(0xFF8B1A10),
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 55),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
         ),
         onPressed: _exibirFormularioPedido,
         child: Text(
@@ -197,33 +221,50 @@ class _ClientePageState extends State<ClientePage> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Dados para Entrega', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Dados para Entrega',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                controller: _nomeController, 
-                decoration: const InputDecoration(labelText: 'Seu Nome', prefixIcon: Icon(Icons.person))),
+                controller: _nomeController,
+                decoration: const InputDecoration(
+                  labelText: 'Seu Nome',
+                  prefixIcon: Icon(Icons.person),
+                ),
+              ),
               const SizedBox(height: 10),
               TextField(
-                controller: _telefoneController, 
-                decoration: const InputDecoration(labelText: 'Telefone / WhatsApp', prefixIcon: Icon(Icons.phone)),
-                keyboardType: TextInputType.phone),
+                controller: _telefoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Telefone / WhatsApp',
+                  prefixIcon: Icon(Icons.phone),
+                ),
+                keyboardType: TextInputType.phone,
+              ),
               const SizedBox(height: 10),
               TextField(
-                controller: _enderecoController, 
-                decoration: const InputDecoration(labelText: 'Endereço Completo', prefixIcon: Icon(Icons.location_on))),
+                controller: _enderecoController,
+                decoration: const InputDecoration(
+                  labelText: 'Endereço Completo',
+                  prefixIcon: Icon(Icons.location_on),
+                ),
+              ),
             ],
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context), 
-            child: const Text('Voltar', style: TextStyle(color: Colors.grey))),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Voltar', style: TextStyle(color: Colors.grey)),
+          ),
           ElevatedButton(
-            onPressed: _finalizarPedido, 
-            child: const Text('Confirmar Agora')),
+            onPressed: _finalizarPedido,
+            child: const Text('Confirmar Agora'),
+          ),
         ],
       ),
     );
@@ -232,7 +273,10 @@ class _ClientePageState extends State<ClientePage> {
   void _finalizarPedido() async {
     if (_nomeController.text.isEmpty || _enderecoController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, preencha nome e endereço!'), backgroundColor: Colors.orange),
+        const SnackBar(
+          content: Text('Por favor, preencha nome e endereço!'),
+          backgroundColor: Colors.orange,
+        ),
       );
       return;
     }
@@ -257,14 +301,19 @@ class _ClientePageState extends State<ClientePage> {
 
     if (!mounted) return;
     Navigator.pop(context); // Fecha o Dialog
-    
-    // Feedback de sucesso
+
+    // Exibicao da finalizacao do pedido
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Sucesso!'),
-        content: const Text('Seu pedido foi enviado para a cozinha.'),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+        content: const Text('Pedido Feito!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
