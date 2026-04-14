@@ -42,5 +42,9 @@ class PedidoService {
     }
   }
 
+  Future<void> deletarPedido(int index) async {
+    await _box.deleteAt(index);
+  }
+
   Future<void> atualizarPedido(Pedido i) async {}
 }

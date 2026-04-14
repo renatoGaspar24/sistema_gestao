@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'produto_service.dart';
 import 'usuario_service.dart';
 import 'pedido_service.dart';
+import 'constants.dart';
 
 class LoginPage extends StatefulWidget {
   final ProdutoService produtoService;
@@ -58,65 +58,39 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CokyLicius',
-        textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 33,
-                fontWeight: FontWeight.bold,
-                color: CupertinoColors.systemYellow,
-              ),
-              ),
-        elevation: 0,
+        title: const Text(
+          'CokyLicius',
+          textAlign: TextAlign.center,
+          style: kTitleTextStyle,
+        ),
+        elevation: kAppBarElevation,
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(kPaddingLarge),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(
-                'assets/images/logo.png',//logotipo na pagina de boas-vindas
-                width: 150,
-                height: 150,
+                'assets/images/logo.png', //logotipo na pagina de boas-vindas
+                width: kLogoWidth,
+                height: kLogoHeight,
               ),
-              Text('Entrar',
-              style: TextStyle(
-                fontSize: 20,
-                color: CupertinoColors.systemYellow,
-              ),
-              ),
-              
+              Text('Entrar', style: kSubtitleTextStyle),
+
               TextField(
                 controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                ),
+                decoration: kTextFieldDecoration('Email'),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: kSpacingMedium),
               TextField(
                 controller: _senhaController,
-                decoration: InputDecoration(
-                  labelText: 'Senha',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                ),
+                decoration: kTextFieldDecoration('Senha'),
                 obscureText: true,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: kSpacingExtraLarge),
               ElevatedButton(onPressed: _login, child: const Text('Entrar')),
             ],
           ),

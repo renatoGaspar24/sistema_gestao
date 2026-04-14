@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'produto_service.dart';
 import 'usuario_service.dart';
 import 'pedido_service.dart';
 import 'models/usuario.dart';
+import 'constants.dart';
 
 class CadastroUsuarioPage extends StatefulWidget {
   final ProdutoService produtoService;
@@ -30,9 +30,12 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
     if (_nomeController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _senhaController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Preencha todos os campos")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos!'),
+          backgroundColor: Colors.orange,
+        ),
+      );
       return;
     }
 
@@ -64,77 +67,43 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("CokyLicius",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-                fontSize: 33,
-                fontWeight: FontWeight.bold,
-                color: CupertinoColors.systemYellow,
-              ),),
-        elevation: 0,
+        title: const Text(
+          "CokyLicius",
+          textAlign: TextAlign.center,
+          style: kTitleTextStyle,
+        ),
+        elevation: kAppBarElevation,
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(kPaddingLarge),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(
-                'assets/images/logo.png',//logotipo na pagina de boas-vindas
-                width: 150,
-                height: 150,
+                'assets/images/logo.png', //logotipo na pagina de boas-vindas
+                width: kLogoWidth,
+                height: kLogoHeight,
               ),
-              Text('Criar conta',
-              style: TextStyle(
-                fontSize: 20,
-                color: CupertinoColors.systemYellow,
-              ),
-              ),
+              Text('Criar conta', style: kSubtitleTextStyle),
               TextField(
                 controller: _nomeController,
-                decoration: InputDecoration(
-                  labelText: "Nome",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                ),
+                decoration: kTextFieldDecoration("Nome"),
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: kSpacingLarge),
               TextField(
                 controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                ),
+                decoration: kTextFieldDecoration("Email"),
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: kSpacingLarge),
               TextField(
                 controller: _senhaController,
                 obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Senha",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                ),
+                decoration: kTextFieldDecoration("Senha"),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: kSpacingExtraLarge),
               ElevatedButton(
                 onPressed: _cadastrar,
                 child: const Text("Cadastrar"),
