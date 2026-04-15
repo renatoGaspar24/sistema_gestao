@@ -16,6 +16,28 @@ class UsuarioService {
 
   List<Usuario> getUsuarios() => _box.values.toList();
 
+  Usuario? getUsuarioPorEmail(String email) {
+    try {
+      return _box.values.firstWhere((u) => u.email == email);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Usuario? autenticar(String email, String senha) {
+    try {
+      return _box.values.firstWhere(
+        (u) => u.email == email && u.senha == senha,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  bool emailExiste(String email) {
+    return getUsuarioPorEmail(email) != null;
+  }
+
   Future<void> addUsuario(Usuario usuario) async {
     await _box.add(usuario);
   }

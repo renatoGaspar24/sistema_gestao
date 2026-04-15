@@ -25,11 +25,13 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
+  final TextEditingController _telefoneController = TextEditingController();
 
   void _cadastrar() {
     if (_nomeController.text.isEmpty ||
         _emailController.text.isEmpty ||
-        _senhaController.text.isEmpty) {
+        _senhaController.text.isEmpty ||
+        _telefoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Preencha todos os campos!'),
@@ -39,11 +41,22 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
       return;
     }
 
-    // Cadastro de usuarios
+    if (widget.usuarioService.emailExiste(_emailController.text.trim())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email já cadastrado!'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     final novo = Usuario(
-      nome: _nomeController.text,
+      nome: _nomeController.text.trim(),
       cargo: 'Cliente',
-      telefone: _emailController.text,
+      telefone: _telefoneController.text.trim(),
+      email: _emailController.text.trim(),
+      senha: _senhaController.text,
       turno: '',
       salario: 0,
       dataAdmissao: DateTime.now(),
@@ -58,6 +71,7 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
           produtoService: widget.produtoService,
           usuarioService: widget.usuarioService,
           pedidoService: widget.pedidoService,
+          usuario: novo,
         ),
       ),
     );
@@ -102,6 +116,11 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
                 controller: _senhaController,
                 obscureText: true,
                 decoration: kTextFieldDecoration("Senha"),
+              ),
+              const SizedBox(height: kSpacingLarge),
+              TextField(
+                controller: _telefoneController,
+                decoration: kTextFieldDecoration("Telefone"),
               ),
               const SizedBox(height: kSpacingExtraLarge),
               ElevatedButton(

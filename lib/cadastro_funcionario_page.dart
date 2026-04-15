@@ -14,16 +14,25 @@ class _CadastroFuncionarioPageState extends State<CadastroFuncionarioPage> {
   final _nome = TextEditingController();
   final _cargo = TextEditingController();
   final _telefone = TextEditingController();
+  final _email = TextEditingController();
+  final _senha = TextEditingController();
   final _turno = TextEditingController();
   final _salario = TextEditingController();
   DateTime? _dataAdmissao;
 
   void _salvar() {
-    if (_nome.text.isEmpty || _cargo.text.isEmpty) return;
+    if (_nome.text.isEmpty ||
+        _cargo.text.isEmpty ||
+        _email.text.isEmpty ||
+        _senha.text.isEmpty) {
+      return;
+    }
     final usuario = Usuario(
       nome: _nome.text,
       cargo: _cargo.text,
       telefone: _telefone.text,
+      email: _email.text,
+      senha: _senha.text,
       turno: _turno.text,
       salario: double.tryParse(_salario.text) ?? 0,
       dataAdmissao: _dataAdmissao ?? DateTime.now(),
@@ -61,6 +70,15 @@ class _CadastroFuncionarioPageState extends State<CadastroFuncionarioPage> {
             TextField(
               controller: _telefone,
               decoration: const InputDecoration(labelText: 'Telefone'),
+            ),
+            TextField(
+              controller: _email,
+              decoration: const InputDecoration(labelText: 'Email'),
+            ),
+            TextField(
+              controller: _senha,
+              decoration: const InputDecoration(labelText: 'Senha'),
+              obscureText: true,
             ),
             TextField(
               controller: _turno,

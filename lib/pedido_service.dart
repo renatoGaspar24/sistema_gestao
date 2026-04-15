@@ -23,6 +23,16 @@ class PedidoService {
 
   List<Pedido> getPedidos() => _box.values.toList();
 
+  List<Pedido> getPedidosPorEmail(String email) {
+    return _box.values.where((pedido) => pedido.clienteEmail == email).toList();
+  }
+
+  List<Pedido> getPedidosPendentesPorEmail(String email) {
+    return _box.values
+        .where((pedido) => pedido.clienteEmail == email && !pedido.entregue)
+        .toList();
+  }
+
   Future<void> addPedido(Pedido pedido) async {
     await _box.add(pedido);
     await _atualizarEstoque(pedido);

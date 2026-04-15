@@ -36,10 +36,23 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // credenciais de administrador
-    bool isAdmin =
-        _emailController.text == "admin@empresa.com" &&
-        _senhaController.text == "admin123";
+    final email = _emailController.text.trim();
+    final senha = _senhaController.text;
+
+    final bool isAdmin = email == 'admin@empresa.com' && senha == 'admin123';
+    final usuario = isAdmin
+        ? null
+        : widget.usuarioService.autenticar(email, senha);
+
+    if (!isAdmin && usuario == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email ou senha incorretos!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     Navigator.pushReplacement(
       context,
@@ -49,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
           produtoService: widget.produtoService,
           usuarioService: widget.usuarioService,
           pedidoService: widget.pedidoService,
+          usuario: usuario,
         ),
       ),
     );

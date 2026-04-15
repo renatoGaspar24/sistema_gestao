@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'produto_service.dart';
 import 'pedido_service.dart';
+import 'usuario_service.dart';
 import 'models/pedido.dart';
 import 'models/produto.dart';
+import 'models/usuario.dart';
 import 'dart:convert'; // Necessário para decodificar o Base64
 import 'carrinho_page.dart'; // Import da nova página do carrinho
+import 'welcome_page.dart';
 import 'constants.dart'; // Import das constantes
 
 class ClientePage extends StatefulWidget {
   final ProdutoService produtoService;
   final PedidoService pedidoService;
+  final UsuarioService usuarioService;
+  final Usuario usuario;
 
   const ClientePage({
     super.key,
     required this.produtoService,
     required this.pedidoService,
+    required this.usuarioService,
+    required this.usuario,
   });
 
   @override
@@ -45,6 +52,23 @@ class _ClientePageState extends State<ClientePage> {
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: kAppBarElevation,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => WelcomePage(
+                    produtoService: widget.produtoService,
+                    usuarioService: widget.usuarioService,
+                    pedidoService: widget.pedidoService,
+                  ),
+                ),
+                (route) => false,
+              );
+            },
+          ),
           Stack(
             children: [
               IconButton(
@@ -54,6 +78,7 @@ class _ClientePageState extends State<ClientePage> {
                     MaterialPageRoute(
                       builder: (context) => CarrinhoPage(
                         carrinho: carrinho,
+                        usuario: widget.usuario,
                         pedidoService: widget.pedidoService,
                         onCarrinhoAlterado: () => setState(() {}),
                       ),
@@ -129,7 +154,7 @@ class _ClientePageState extends State<ClientePage> {
                 ],
               ),
       ),
-      bottomNavigationBar: carrinho.isNotEmpty
+      /*bottomNavigationBar: carrinho.isNotEmpty
           ? SafeArea(
               top: false,
               child: Container(
@@ -143,6 +168,7 @@ class _ClientePageState extends State<ClientePage> {
                       MaterialPageRoute(
                         builder: (context) => CarrinhoPage(
                           carrinho: carrinho,
+                          usuario: widget.usuario,
                           pedidoService: widget.pedidoService,
                           onCarrinhoAlterado: () => setState(() {}),
                         ),
@@ -156,7 +182,7 @@ class _ClientePageState extends State<ClientePage> {
                 ),
               ),
             )
-          : null,
+          : null,*/
     );
   }
 

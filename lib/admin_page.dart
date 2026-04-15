@@ -109,7 +109,7 @@ class _AdminPageState extends State<AdminPage> {
               bottom: const TabBar(
                 tabs: [
                   Tab(text: 'Produtos/Estoque'),
-                  Tab(text: 'Funcionários'),
+                  Tab(text: 'Contas'),
                   Tab(text: 'Pedidos'),
                 ],
               ),

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'models/pedido.dart';
+import 'models/usuario.dart';
 import 'pedido_service.dart';
 import 'dart:convert';
 import 'constants.dart';
 
 class CarrinhoPage extends StatefulWidget {
   final List<ItemPedido> carrinho;
+  final Usuario usuario;
   final PedidoService pedidoService;
   final VoidCallback onCarrinhoAlterado;
 
   const CarrinhoPage({
     super.key,
     required this.carrinho,
+    required this.usuario,
     required this.pedidoService,
     required this.onCarrinhoAlterado,
   });
@@ -24,6 +27,13 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   final TextEditingController _enderecoController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _nomeController.text = widget.usuario.nome;
+    _telefoneController.text = widget.usuario.telefone;
+  }
 
   double get _total => widget.carrinho.fold(
     0.0,
@@ -64,6 +74,7 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
 
     final pedido = Pedido(
       clienteNome: _nomeController.text,
+      clienteEmail: widget.usuario.email,
       telefone: _telefoneController.text,
       endereco: _enderecoController.text,
       itens: List.from(widget.carrinho),
