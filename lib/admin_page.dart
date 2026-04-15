@@ -109,7 +109,7 @@ class _AdminPageState extends State<AdminPage> {
               bottom: const TabBar(
                 tabs: [
                   Tab(text: 'Produtos/Estoque'),
-                  Tab(text: 'Funcionários'),
+                  Tab(text: 'Contas'),
                   Tab(text: 'Pedidos'),
                 ],
               ),
@@ -122,8 +122,10 @@ class _AdminPageState extends State<AdminPage> {
               ],
             ),
             // botoes fluantes de atualizacao de stock,funcionarios e produtos
-            floatingActionButton: AnimatedBuilder(            // foi adicionado pq ao mudar de aba o botao nao atualizava e causa bugs na pagina
-              animation: tabController,                       // está funcao recontroi o botao para cada aba sempre que mudo 
+            floatingActionButton: AnimatedBuilder(
+              // foi adicionado pq ao mudar de aba o botao nao atualizava e causa bugs na pagina
+              animation:
+                  tabController, // está funcao recontroi o botao para cada aba sempre que mudo
               builder: (context, child) {
                 switch (tabController.index) {
                   case 0:
@@ -138,7 +140,9 @@ class _AdminPageState extends State<AdminPage> {
                           ),
                         );
                       },
-                      child: const Icon(Icons.add),      //botao para adicionar produtos 
+                      child: const Icon(
+                        Icons.add,
+                      ), //botao para adicionar produtos
                     );
 
                   case 1:
@@ -153,12 +157,17 @@ class _AdminPageState extends State<AdminPage> {
                           ),
                         );
                       },
-                      child: const Icon(Icons.person_add), // botao na aba de funcionarios
+                      child: const Icon(
+                        Icons.person_add,
+                      ), // botao na aba de funcionarios
                     );
+
                   case 2:
                     return FloatingActionButton(
                       onPressed: _loadPedidos,
-                      child: const Icon(Icons.refresh), //botao na na aba de pedido
+                      child: const Icon(
+                        Icons.refresh,
+                      ), //botao na na aba de pedido
                     );
 
                   default:
@@ -171,10 +180,11 @@ class _AdminPageState extends State<AdminPage> {
       ),
     );
   }
- // contrucao da aba onde sao apresentados os produtos,mostrando os seus detalhes.´
- // listView.builder para mostrar os em forma de lista. 
-  Widget _buildProdutosTab() {                
-    return ListView.builder( 
+
+  // contrucao da aba onde sao apresentados os produtos,mostrando os seus detalhes.´
+  // listView.builder para mostrar os em forma de lista.
+  Widget _buildProdutosTab() {
+    return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _produtos.length,
       itemBuilder: (context, index) {
@@ -200,7 +210,7 @@ class _AdminPageState extends State<AdminPage> {
       },
     );
   }
- 
+
   Widget _buildProdutoImagem(Produto p) {
     if (p.imagemPath.isEmpty) {
       return const Icon(Icons.fastfood, size: 50);
@@ -216,7 +226,7 @@ class _AdminPageState extends State<AdminPage> {
             const Icon(Icons.broken_image, size: 50),
       );
     }
-// esta funcao serve para descodificar as imagens que sao adicionadas quando for cadastrado um produtos
+    // esta funcao serve para descodificar as imagens que sao adicionadas quando for cadastrado um produtos
     if (p.imagemPath.length > 100) {
       try {
         return Image.memory(
@@ -245,6 +255,11 @@ class _AdminPageState extends State<AdminPage> {
           title: Text(u.nome),
           subtitle: Text(u.cargo),
           children: [
+            Image.asset(
+              'assets/images/logo.png', //logotipo na pagina de boas-vindas
+              width: 150,
+              height: 150,
+            ),
             ListTile(title: const Text("Telefone"), subtitle: Text(u.telefone)),
             ListTile(title: const Text("Cargo"), subtitle: Text(u.cargo)),
           ],
@@ -307,12 +322,44 @@ class _AdminPageState extends State<AdminPage> {
               ],
             ),
             trailing: ped.entregue
-                ? const Icon(Icons.check_circle, color: Colors.green)
+                ? IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    tooltip: 'Deletar pedido entregue',
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Confirmar exclusão'),
+                          content: const Text(
+                            'Tem certeza que deseja deletar este pedido entregue?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                widget.pedidoService.deletarPedido(index);
+                                _loadPedidos();
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                'Deletar',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  )
                 : IconButton(
                     icon: const Icon(
                       Icons.delivery_dining,
                       color: Color(0xFF8B1A10),
                     ),
+                    tooltip: 'Marcar como entregue',
                     onPressed: () {
                       widget.pedidoService.marcarEntregue(index);
                       _loadPedidos();

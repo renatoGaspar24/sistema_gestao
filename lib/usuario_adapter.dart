@@ -19,13 +19,15 @@ class UsuarioAdapter extends TypeAdapter<Usuario> {
       turno: fields[3] as String,
       salario: fields[4] as double,
       dataAdmissao: fields[5] as DateTime,
+      email: fields[6] as String? ?? '',
+      senha: fields[7] as String? ?? '',
     );
   }
 
   @override
   void write(BinaryWriter writer, Usuario obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.nome)
       ..writeByte(1)
@@ -37,6 +39,10 @@ class UsuarioAdapter extends TypeAdapter<Usuario> {
       ..writeByte(4)
       ..write(obj.salario)
       ..writeByte(5)
-      ..write(obj.dataAdmissao);
+      ..write(obj.dataAdmissao)
+      ..writeByte(6)
+      ..write(obj.email)
+      ..writeByte(7)
+      ..write(obj.senha);
   }
 }

@@ -42,31 +42,47 @@ class PedidoAdapter extends TypeAdapter<Pedido> {
     for (int i = 0; i < numOfFields; i++) {
       fields[reader.readByte()] = reader.read();
     }
+
+    if (numOfFields == 6) {
+      return Pedido(
+        clienteNome: fields[0] as String,
+        clienteEmail: '',
+        telefone: fields[1] as String,
+        endereco: fields[2] as String,
+        itens: (fields[3] as List).cast<ItemPedido>(),
+        criadoEm: fields[4] as DateTime,
+        entregue: fields[5] as bool,
+      );
+    }
+
     return Pedido(
       clienteNome: fields[0] as String,
-      telefone: fields[1] as String,
-      endereco: fields[2] as String,
-      itens: (fields[3] as List).cast<ItemPedido>(),
-      criadoEm: fields[4] as DateTime,
-      entregue: fields[5] as bool,
+      clienteEmail: fields[1] as String? ?? '',
+      telefone: fields[2] as String,
+      endereco: fields[3] as String,
+      itens: (fields[4] as List).cast<ItemPedido>(),
+      criadoEm: fields[5] as DateTime,
+      entregue: fields[6] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Pedido obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.clienteNome)
       ..writeByte(1)
-      ..write(obj.telefone)
+      ..write(obj.clienteEmail)
       ..writeByte(2)
-      ..write(obj.endereco)
+      ..write(obj.telefone)
       ..writeByte(3)
-      ..write(obj.itens)
+      ..write(obj.endereco)
       ..writeByte(4)
-      ..write(obj.criadoEm)
+      ..write(obj.itens)
       ..writeByte(5)
+      ..write(obj.criadoEm)
+      ..writeByte(6)
       ..write(obj.entregue);
   }
 }

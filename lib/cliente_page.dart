@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'produto_service.dart';
 import 'pedido_service.dart';
+import 'usuario_service.dart';
 import 'models/pedido.dart';
 import 'models/produto.dart';
+import 'models/usuario.dart';
 import 'dart:convert'; // Necessário para decodificar o Base64
+import 'carrinho_page.dart'; // Import da nova página do carrinho
+import 'welcome_page.dart';
+import 'constants.dart'; // Import das constantes
 
 class ClientePage extends StatefulWidget {
   final ProdutoService produtoService;
   final PedidoService pedidoService;
+  final UsuarioService usuarioService;
+  final Usuario usuario;
 
   const ClientePage({
     super.key,
     required this.produtoService,
     required this.pedidoService,
+    required this.usuarioService,
+    required this.usuario,
   });
 
   @override
@@ -22,53 +31,119 @@ class ClientePage extends StatefulWidget {
 class _ClientePageState extends State<ClientePage> {
   final List<ItemPedido> carrinho = [];
 
-  // Controllers para capturar os dados do cliente
-  final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _telefoneController = TextEditingController();
-  final TextEditingController _enderecoController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     final produtos = widget.produtoService.getProdutos();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF8B1A10),
+      backgroundColor: kBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Cokylicious Menu',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.white,
+            height: 1.2,
+            fontWeight: FontWeight.bold,
+            fontSize: kBodyFontSize,
+          ),
         ),
-        backgroundColor: const Color(0xFF8B1A10),
+        backgroundColor: kBackgroundColor,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
+        elevation: kAppBarElevation,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => WelcomePage(
+                    produtoService: widget.produtoService,
+                    usuarioService: widget.usuarioService,
+                    pedidoService: widget.pedidoService,
+                  ),
+                ),
+                (route) => false,
+              );
+            },
+          ),
+          Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CarrinhoPage(
+                        carrinho: carrinho,
+                        usuario: widget.usuario,
+                        pedidoService: widget.pedidoService,
+                        onCarrinhoAlterado: () => setState(() {}),
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.shopping_cart),
+              ),
+              if (carrinho.isNotEmpty)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '${carrinho.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
       body: SafeArea(
         child: produtos.isEmpty
-            ? const Center(
-                child: Text(
-                  'Nenhum produto disponível',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              )
+            ? const Center(child: Text('Nenhum produto disponível'))
             : Column(
                 children: [
+                  Image.asset(
+                    'assets/images/logo.png',
+                    width: 100,
+                    height: 100,
+                  ),
                   Expanded(
                     child: LayoutBuilder(
                       builder: (context, constraints) {
-                        // Responsividade: muda o número de colunas conforme a largura
-                        int colunas = constraints.maxWidth > 900
-                            ? 4
-                            : (constraints.maxWidth > 600 ? 3 : 2);
-
+                        final int colunas =
+                            constraints.maxWidth > kGridBreakpointLarge
+                            ? kGridColumnsLarge
+                            : (constraints.maxWidth > kGridBreakpointMedium
+                                  ? kGridColumnsMedium
+                                  : kGridColumnsSmall);
                         return GridView.builder(
-                          padding: const EdgeInsets.all(12),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: colunas,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio:
-                                0.75, // Ajustado para acomodar melhor os elementos
-                          ),
+                          padding: const EdgeInsets.all(kPaddingMedium),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: colunas,
+                                crossAxisSpacing: kGridCrossAxisSpacing,
+                                mainAxisSpacing: kGridMainAxisSpacing,
+                                childAspectRatio: kGridChildAspectRatio,
+                              ),
                           itemCount: produtos.length,
                           itemBuilder: (context, index) =>
                               _buildProdutoCard(produtos[index]),
@@ -76,22 +151,49 @@ class _ClientePageState extends State<ClientePage> {
                       },
                     ),
                   ),
-                  // Barra inferior só aparece se houver itens
-                  if (carrinho.isNotEmpty) _buildBottomBar(),
                 ],
               ),
       ),
+      /*bottomNavigationBar: carrinho.isNotEmpty
+          ? SafeArea(
+              top: false,
+              child: Container(
+                padding: const EdgeInsets.all(kPaddingMedium),
+                color: kBackgroundColor,
+                child: ElevatedButton(
+                  style: kElevatedButtonStyle(Colors.orange),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CarrinhoPage(
+                          carrinho: carrinho,
+                          usuario: widget.usuario,
+                          pedidoService: widget.pedidoService,
+                          onCarrinhoAlterado: () => setState(() {}),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Ver Carrinho (${carrinho.length} itens)',
+                    style: kBodyTextStyle,
+                  ),
+                ),
+              ),
+            )
+          : null,*/
     );
   }
 
   // Função que decide como carregar a imagem (Base64 ou Asset)
   Widget _buildImagem(String imagemPath) {
     if (imagemPath.isEmpty) {
-      return const Icon(Icons.fastfood, size: 40, color: Color(0xFF8B1A10));
+      return Icon(Icons.fastfood, size: kIconSizeSmall, color: kSecondaryColor);
     }
 
     // Se a string for muito longa, tratamos como Base64 (Web/Novo Cadastro)
-    if (imagemPath.length > 200) {
+    if (imagemPath.length > 100) {
       try {
         return Image.memory(
           base64Decode(imagemPath),
@@ -109,55 +211,54 @@ class _ClientePageState extends State<ClientePage> {
       imagemPath,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) =>
-          const Icon(Icons.fastfood, size: 40),
+          Icon(Icons.fastfood, size: kIconSizeSmall),
     );
   }
 
   Widget _buildProdutoCard(Produto produto) {
     return Card(
-      elevation: 4,
-      color: const Color(0xFFFFC107).withValues(alpha: 0.95),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: kProductCardElevation,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(kProductCardBorderRadius),
+      ),
+      color: kSurfaceColor,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Área da Imagem
           Expanded(
-            flex: 3,
+            flex: kCardImageHeightRatio.toInt(),
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(15),
+                top: Radius.circular(kProductCardBorderRadius),
               ),
               child: Container(
-                color: Colors.white24,
+                color: const Color.fromARGB(57, 252, 255, 252),
                 child: _buildImagem(produto.imagemPath),
               ),
             ),
           ),
           // Informações do Produto
           Expanded(
-            flex: 2,
+            flex: kCardInfoHeightRatio.toInt(),
             child: Padding(
-              padding: const EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(kProductCardPadding),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     produto.nome,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
+                    style: kSmallTextStyle.copyWith(fontSize: kSmallFontSize),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     '${produto.preco.toStringAsFixed(0)} ${produto.moeda}',
-                    style: const TextStyle(
-                      color: Color(0xFF8B1A10),
+                    style: TextStyle(
+                      color: kSecondaryColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: kBodyFontSize,
                     ),
                   ),
                   GestureDetector(
@@ -170,148 +271,19 @@ class _ClientePageState extends State<ClientePage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('${produto.nome} adicionado!'),
-                          duration: const Duration(seconds: 1),
+                          duration: kSnackBarDuration,
                         ),
                       );
                     },
-                    child: const Icon(
+                    child: Icon(
                       Icons.add_circle,
-                      color: Color(0xFF8B1A10),
-                      size: 30,
+                      color: kSecondaryColor,
+                      size: kIconSizeMedium,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomBar() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF8B1A10),
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 55),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
-        onPressed: _exibirFormularioPedido,
-        child: Text(
-          'Finalizar Pedido (${carrinho.length} itens)',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  void _exibirFormularioPedido() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          'Dados para Entrega',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _nomeController,
-                decoration: const InputDecoration(
-                  labelText: 'Seu Nome',
-                  prefixIcon: Icon(Icons.person),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _telefoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Telefone / WhatsApp',
-                  prefixIcon: Icon(Icons.phone),
-                ),
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _enderecoController,
-                decoration: const InputDecoration(
-                  labelText: 'Endereço Completo',
-                  prefixIcon: Icon(Icons.location_on),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Voltar', style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: _finalizarPedido,
-            child: const Text('Confirmar Agora'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _finalizarPedido() async {
-    if (_nomeController.text.isEmpty || _enderecoController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, preencha nome e endereço!'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    final pedido = Pedido(
-      clienteNome: _nomeController.text,
-      telefone: _telefoneController.text,
-      endereco: _enderecoController.text,
-      itens: List.from(carrinho),
-      criadoEm: DateTime.now(),
-      entregue: false,
-    );
-
-    await widget.pedidoService.addPedido(pedido);
-
-    setState(() {
-      carrinho.clear();
-      _nomeController.clear();
-      _telefoneController.clear();
-      _enderecoController.clear();
-    });
-
-    if (!mounted) return;
-    Navigator.pop(context); // Fecha o Dialog
-
-    // Exibicao da finalizacao do pedido
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sucesso!'),
-        content: const Text('Pedido Feito!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
           ),
         ],
       ),

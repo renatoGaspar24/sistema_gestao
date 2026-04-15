@@ -9,6 +9,7 @@ class ItemPedido {
 
 class Pedido {
   final String clienteNome;
+  final String clienteEmail;
   final String telefone;
   final String endereco;
   final List<ItemPedido> itens;
@@ -17,6 +18,7 @@ class Pedido {
 
   Pedido({
     required this.clienteNome,
+    required this.clienteEmail,
     required this.telefone,
     required this.endereco,
     required this.itens,

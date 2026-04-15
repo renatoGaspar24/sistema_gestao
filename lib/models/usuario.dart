@@ -2,6 +2,8 @@ class Usuario {
   final String nome;
   final String cargo;
   final String telefone;
+  final String email;
+  final String senha;
   final String turno;
   final double salario;
   final DateTime dataAdmissao;
@@ -10,6 +12,8 @@ class Usuario {
     required this.nome,
     required this.cargo,
     required this.telefone,
+    required this.email,
+    required this.senha,
     required this.turno,
     required this.salario,
     required this.dataAdmissao,
