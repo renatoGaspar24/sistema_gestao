@@ -81,32 +81,40 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(kPaddingLarge),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/images/logo.png', //logotipo na pagina de boas-vindas
-                width: kLogoWidth,
-                height: kLogoHeight,
-              ),
-              Text('Entrar', style: kSubtitleTextStyle),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(kPaddingLarge),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 540),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/logo.png', //logotipo na pagina de boas-vindas
+                    width: kLogoWidth,
+                    height: kLogoHeight,
+                  ),
+                  Text('Entrar', style: kSubtitleTextStyle),
 
-              TextField(
-                controller: _emailController,
-                decoration: kTextFieldDecoration('Email'),
+                  TextField(
+                    controller: _emailController,
+                    decoration: kTextFieldDecoration('Email'),
+                  ),
+                  const SizedBox(height: kSpacingMedium),
+                  TextField(
+                    controller: _senhaController,
+                    decoration: kTextFieldDecoration('Senha'),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: kSpacingExtraLarge),
+                  ElevatedButton(
+                    onPressed: _login,
+                    child: const Text('Entrar'),
+                  ),
+                ],
               ),
-              const SizedBox(height: kSpacingMedium),
-              TextField(
-                controller: _senhaController,
-                decoration: kTextFieldDecoration('Senha'),
-                obscureText: true,
-              ),
-              const SizedBox(height: kSpacingExtraLarge),
-              ElevatedButton(onPressed: _login, child: const Text('Entrar')),
-            ],
+            ),
           ),
         ),
       ),

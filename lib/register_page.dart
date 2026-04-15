@@ -90,44 +90,49 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(kPaddingLarge),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/images/logo.png', //logotipo na pagina de boas-vindas
-                width: kLogoWidth,
-                height: kLogoHeight,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(kPaddingLarge),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 540),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/logo.png', //logotipo na pagina de boas-vindas
+                    width: kLogoWidth,
+                    height: kLogoHeight,
+                  ),
+                  Text('Criar conta', style: kSubtitleTextStyle),
+                  TextField(
+                    controller: _nomeController,
+                    decoration: kTextFieldDecoration("Nome"),
+                  ),
+                  const SizedBox(height: kSpacingLarge),
+                  TextField(
+                    controller: _emailController,
+                    decoration: kTextFieldDecoration("Email"),
+                  ),
+                  const SizedBox(height: kSpacingLarge),
+                  TextField(
+                    controller: _senhaController,
+                    obscureText: true,
+                    decoration: kTextFieldDecoration("Senha"),
+                  ),
+                  const SizedBox(height: kSpacingLarge),
+                  TextField(
+                    controller: _telefoneController,
+                    decoration: kTextFieldDecoration("Telefone"),
+                  ),
+                  const SizedBox(height: kSpacingExtraLarge),
+                  ElevatedButton(
+                    onPressed: _cadastrar,
+                    child: const Text("Cadastrar"),
+                  ),
+                ],
               ),
-              Text('Criar conta', style: kSubtitleTextStyle),
-              TextField(
-                controller: _nomeController,
-                decoration: kTextFieldDecoration("Nome"),
-              ),
-              const SizedBox(height: kSpacingLarge),
-              TextField(
-                controller: _emailController,
-                decoration: kTextFieldDecoration("Email"),
-              ),
-              const SizedBox(height: kSpacingLarge),
-              TextField(
-                controller: _senhaController,
-                obscureText: true,
-                decoration: kTextFieldDecoration("Senha"),
-              ),
-              const SizedBox(height: kSpacingLarge),
-              TextField(
-                controller: _telefoneController,
-                decoration: kTextFieldDecoration("Telefone"),
-              ),
-              const SizedBox(height: kSpacingExtraLarge),
-              ElevatedButton(
-                onPressed: _cadastrar,
-                child: const Text("Cadastrar"),
-              ),
-            ],
+            ),
           ),
         ),
       ),

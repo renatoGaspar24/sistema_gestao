@@ -20,70 +20,77 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/logo.png', //logotipo na pagina de boas-vindas
-                width: 150,
-                height: 150,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Cokylicius',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Visite o nosso cardápio.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
-                ),
-              ),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 540),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/logo.png', //logotipo na pagina de boas-vindas
+                    width: 150,
+                    height: 150,
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Cokylicius',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Visite o nosso cardápio.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha(180),
+                    ),
+                  ),
 
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => LoginPage(
-                        produtoService: produtoService,
-                        usuarioService: usuarioService,
-                        pedidoService: pedidoService,
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Entrar'),
+                  const SizedBox(height: 40),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LoginPage(
+                            produtoService: produtoService,
+                            usuarioService: usuarioService,
+                            pedidoService: pedidoService,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('Entrar'),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CadastroUsuarioPage(
+                            produtoService: produtoService,
+                            usuarioService: usuarioService,
+                            pedidoService: pedidoService,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('Criar conta'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CadastroUsuarioPage(
-                        produtoService: produtoService,
-                        usuarioService: usuarioService,
-                        pedidoService: pedidoService,
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Criar conta'),
-              ),
-            ],
+            ),
           ),
         ),
       ),
